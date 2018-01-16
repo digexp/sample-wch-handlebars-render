@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-scriptportlet-generate-url-map="true">
+
+<head>
+	<title>WCH Handlebars Rendered Content Sample</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="script-app.css">
+
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="application/javascript" src="wch-renderer.js"></script>
+	<script type="application/javascript" src="app.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
+
+	<script>
+		var editMode = false;	// Portal page mode (EDIT or VIEW)
+	</script>
+</head>
+
+<body class="container hbs-sample-modals-closed">
+	<div class="d-none">[Plugin:PageMode pageMode="EDIT"]
+	<script>
+		editMode = true;
+	</script>
+	[/Plugin:PageMode]</div>
+
+	<!-- START OF EDIT DIALOG SECTION -->
+	<div id="__SPNS__preferences-modal" data-modal-index="1" class="modal fade">
+		<div class="modal-dialog hbs-sample">
+			<div class="modal-content">
+				<div class="modal-header">
+        			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">close</span></button>
+					<h4 class="modal-title">Select WCH Content</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group row">
+							<div class="col-xs-4">
+								<label class="picker-label">Content display mode</label>
+							</div>
+							<div class="col-xs-8">
+								<label class="radio-inline">
+									<input type="radio" id="__SPNS__contentModeContentButton" onclick="__SPNS__.updateFieldVisibility();" name="optradio">Single content item</label>
+								<label class="radio-inline">
+									<input type="radio" id="__SPNS__contentModeSearchButton" onclick="__SPNS__.updateFieldVisibility();" name="optradio">Search result list</label>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-4">
+								<label class="picker-label">Content type</label>
+							</div>
+							<div class="col-xs-8">
+								<select class="form-control" onchange="__SPNS__.handleTypeSelectChange(this);" id="__SPNS__contentTypeSelector"></select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-xs-4">
+								<label class="picker-label">Template</label>
+							</div>
+							<div class="col-xs-8">
+								<select class="form-control" id="__SPNS__templateSelector"></select>
+							</div>
+						</div>
+						<div id="__SPNS__contentItemSelectorContainer" class="form-group row">
+							<div class="col-xs-4">
+								<label class="picker-label">Content item</label>
+							</div>
+							<div class="col-xs-8">
+								<select class="form-control" id="__SPNS__contentItemSelector"></select>
+								<p id="__SPNS__contentItemText"></p>
+								<a id="__SPNS__pickerBtn" class="btn btn-primary" onclick="__SPNS__.launchPicker();" data-toggle="modal" data-backdrop="false" data-target="#__SPNS__contentPickerDialog">Launch content palette</a>
+							</div>
+						</div>
+						<div id="__SPNS__tagsInputContainer" class="form-group row">
+							<div id="__SPNS__tagsInputError" class="d-none">
+								<div class="col-xs-4"></div>
+								<div class="col-xs-8 hbs-sample-error">
+									Avoid special characters: # % & ;
+								</div>
+							</div>
+							<div class="col-xs-4">
+								<label for="searchTagsInput" class="picker-label">Optional search tag (comma separated)</label>
+							</div>
+							<div class="col-xs-8">
+								<input type="text" class="form-control" id="__SPNS__searchTagsInput"></input>
+							</div>
+						</div>
+						<div id="__SPNS__rowsInputContainer" class="form-group row">
+							<div id="__SPNS__rowsInputError" class="d-none">
+								<div class="col-xs-4"></div>
+								<div class="col-xs-8 hbs-sample-error">
+									The number of results must be a positive integer.
+								</div>
+							</div>
+							<div class="col-xs-4">
+								<label class="picker-label">Number of results</label>
+							</div>
+							<div class="col-xs-8">
+								<input type="text" value="3" class="form-control" id="__SPNS__rowsInput"></select>
+							</div>
+						</div>
+					</form>
+				</div><!-- end modal body -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" onclick="__SPNS__.saveAndClose();" class="btn btn-primary" data-dismiss="modal">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END OF EDIT DIALOG SECTION -->
+
+	<!-- EDIT DIALOG LAUNCH BUTTON (only in edit mode) -->
+	<div class="row hbs-sample-row" class="hide-in-view-mode">
+		<button type="button" onclick="__SPNS__.initDialog();" class="btn btn-primary" data-toggle="modal" data-target="#__SPNS__preferences-modal">Select content from Watson Content Hub</button>
+	</div>
+
+	<!-- ERROR AREA -->
+	<div class="row hbs-sample-row d-none hbs-sample-error" id="__SPNS__wchContentError"></div>
+
+	<!-- WCH RENDERING AREA -->
+	<div class="row hbs-sample-row" id="__SPNS__wchContentResult"></div>
+
+	<!-- WCH PICKER PALETTE SECTION -->
+	<div class="modal fade" id="__SPNS__contentPickerDialog" data-modal-index="2">
+		<div class="modal-dialog hbs-sample">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">Content palette</h4>
+				</div>
+				<div class="modal-body">
+					<iframe tabindex="0" id="__SPNS__pickerIframe"></iframe>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+</body>
+
+</html>

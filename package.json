@@ -1,0 +1,11 @@
+{
+  "name": "sample-wch-handlebars-render",
+  "version": "1.0.0",
+  "description": "Samples Script Applications for rendering Handlebars templates with content from Watson Content Hub.",
+  "main": "main.js",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}

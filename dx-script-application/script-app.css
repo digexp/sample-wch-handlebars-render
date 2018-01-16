@@ -1,0 +1,47 @@
+html {
+	font-size: 14px;
+}
+
+.hbs-sample-row {
+	margin-top: 20px;
+}
+
+.modal-dialog.hbs-sample {
+	width: 70%;
+}
+
+.hbs-sample-error {
+	color: #a94442
+}
+
+.d-none {
+	display: none;
+}
+
+.hide-in-view-mode {
+	display: none;
+}
+.edit-mode .hide-in-view-mode {
+	display: block;
+}
+
+.hide-in-edit-mode {
+	display: block;
+}
+.edit-mode .hide-in-edit-mode {
+	display: none;
+}
+
+#__SPNS__contentItemText {
+	float: left;
+}
+#__SPNS__contentItemSelector {
+	width: 50%;
+	float: left;
+	margin-right: 20px;
+}
+
+#__SPNS__pickerIframe {
+    width: 100%;
+    height: 500px;
+}
