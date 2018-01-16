@@ -3,10 +3,10 @@ This is a sample script application for IBM Digital Experience (DX) 8.5 or 9.0. 
 
 
 This screenshot shows a Portal page with two instances of this application. The top instance shows a single "Hero Banner" content item and the bottom instance shows a search for articles.
-![Alt text](docs/dx-script-app.jpg?raw=true "Sample screenshot")
+![single item and list content rendering](docs/dx-script-app.jpg?raw=true "Sample screenshot")
 
 This shows the configuration UI for selecting a content item or search parameters.
-![Alt text](docs/dx-script-app-configuration.jpg?raw=true "Sample configuration screenshot")
+![content configuration](docs/dx-script-app-configuration.jpg?raw=true "Sample configuration screenshot")
 
 
 ## Installing and running the sample
