@@ -30,7 +30,7 @@ For this scenario you will need to enable CORS support for your tenant. To contr
 #### 5. Install the Script App to DX
 
 To upload the sample Script Application:
-+ Install the Script Application command line `sp`, as described in the Script Application documentation.
++ Install the [Script Application](https://www.ibm.com/support/knowledgecenter/en/SSYJ99_8.5.0/script-portlet/cmd_line_push_ovr.html) command line `sp`, as described in the Script Application documentation.
 + Call `sp push` from the folder containing index.html to push the contents of that folder as a script application.
 
 #### 6. Adding the Script App to a DX Page

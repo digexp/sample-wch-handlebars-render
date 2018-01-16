@@ -49,8 +49,7 @@ const _availableTemplates = {
 
 // contants and defaults
 const _usePicker = true;
-const _baseTenantUrl = 'https://dch-dxcloud.rtp.raleigh.ibm.com/api/8b9a825d-7b9b-4bfa-8c35-24d3951ba370';
-//const _baseTenantUrl = '{Tenant API URL}';	// Set your base tenant API URL here TODO
+const _baseTenantUrl = '{Tenant API URL}';	// Set your base tenant API URL here
 const _deliveryPaletteUrl = 'https://www.digitalexperience.ibm.com/content-picker/picker.html?apiUrl=' + _baseTenantUrl + '&fq=classification:content&fq=type:';
 const _templateFolder = 'hbs-templates/';
 const _contentModeContent = 'content';	// single content item mode, default
