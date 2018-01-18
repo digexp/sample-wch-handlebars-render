@@ -50,7 +50,7 @@ const _availableTemplates = {
 // contants and defaults
 const _usePicker = true;
 const _baseTenantUrl = '{Tenant API URL}';	// Set your base tenant API URL here
-const _deliveryPaletteUrl = 'https://www.digitalexperience.ibm.com/content-picker/picker.html?apiUrl=' + _baseTenantUrl + '&fq=classification:content&fq=type:';
+const _deliveryPaletteUrl = 'https://www.digitalexperience.ibm.com/content-picker/picker.html?apiUrl=' + _baseTenantUrl + '&fq=classification:content&fq=type:("';
 const _templateFolder = 'hbs-templates/';
 const _contentModeContent = 'content';	// single content item mode, default
 const _contentModeSearch = 'list';		// search results list mode
@@ -397,7 +397,7 @@ const _messageEvent = _eventMethod === 'attachEvent' ? 'onmessage' : 'message';
 
 // Load the picker and listen to message from child iFrame window.
 function launchPicker() {
-	$('#__SPNS__pickerIframe').attr('src', _deliveryPaletteUrl + _selectedContent.contentType);
+	$('#__SPNS__pickerIframe').attr('src', _deliveryPaletteUrl + _selectedContent.contentType + '")');
 	_eventer(_messageEvent, handlePaletteResult, false);
 }
 
