@@ -84,7 +84,7 @@
 								<label for="searchTagsInput" class="picker-label">Optional search tag (comma separated)</label>
 							</div>
 							<div class="col-xs-8">
-								<input type="text" class="form-control" id="__SPNS__searchTagsInput"></input>
+								<input type="text" onblur="__SPNS__.checkForFormErrors()" class="form-control" id="__SPNS__searchTagsInput"></input>
 							</div>
 						</div>
 						<div id="__SPNS__rowsInputContainer" class="form-group row">
@@ -98,14 +98,14 @@
 								<label class="picker-label">Number of results</label>
 							</div>
 							<div class="col-xs-8">
-								<input type="text" value="3" class="form-control" id="__SPNS__rowsInput"></select>
+								<input type="text" onblur="__SPNS__.checkForFormErrors()" value="3" class="form-control" id="__SPNS__rowsInput"></select>
 							</div>
 						</div>
 					</form>
 				</div><!-- end modal body -->
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					<button type="button" onclick="__SPNS__.saveAndClose();" class="btn btn-primary" data-dismiss="modal">Save</button>
+					<button type="button" id="__SPNS__saveBtn" onclick="__SPNS__.saveAndClose();" class="btn btn-primary" data-dismiss="modal" disabled>Save</button>
 				</div>
 			</div>
 		</div>

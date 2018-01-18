@@ -180,7 +180,7 @@ function initDialog() {
 		__SPNS__templateSelector.value = selContent.template;
 		__SPNS__contentTypeSelector.value = selContent.contentType;
 		__SPNS__contentItemSelector.value = selContent.contentId;
-		__SPNS__contentItemText.innerHTML = selContent.contentName ?  selContent.contentName + '&nbsp;&nbsp;&nbsp;&nbsp;' : '';
+		__SPNS__contentItemText.innerHTML = selContent.contentName ?  selContent.contentName + '&nbsp;&nbsp;&nbsp;&nbsp;' : 'Pick content here-->&nbsp;&nbsp;';
 		__SPNS__searchTagsInput.value = selContent.searchTags || '';
 		__SPNS__rowsInput.value = selContent.numSearchRows || '3';
 		__SPNS__wchContentError.style.display = 'none';
@@ -214,6 +214,9 @@ function updateFieldVisibility() {
 	// get the mode from the UI form
 	_selectedContent.contentMode = __SPNS__contentModeSearchButton.checked ? _contentModeSearch : _contentModeContent;
 	initTypeSelector();
+
+	// check for errors
+	checkForFormErrors();
 
 	// Search results list mode : Single content item mode
 	const listMode = _selectedContent.contentMode === _contentModeSearch;
@@ -300,6 +303,37 @@ function populateContentPicker() {
 	});
 }
 
+function checkForFormErrors() {
+
+	// search list mode errors
+	if(_selectedContent.contentMode === _contentModeSearch) {
+
+		// check the user input
+		_selectedContent.searchTags = _escapeSolr(__SPNS__searchTagsInput.value.trim());
+		_selectedContent.numSearchRows = _isPositiveInt(__SPNS__rowsInput.value.trim());
+
+		// display errors based on sanitized user input
+		__SPNS__tagsInputError.style.display = _selectedContent.searchTags === false ? 'block' : 'none';
+		__SPNS__rowsInputError.style.display = _selectedContent.numSearchRows === false ? 'block' : 'none';
+
+		// no errors: enable the save button, return false
+		if(_selectedContent.searchTags !== false && _selectedContent.numSearchRows !== false) {
+			__SPNS__saveBtn.disabled = false;
+			return false;
+
+		// errors: disable the save button, return true
+		} else {
+			__SPNS__saveBtn.disabled = true;
+			return true;
+		}
+
+	// single content mode errors
+	} else {
+		__SPNS__saveBtn.disabled = false;
+		return false;
+	}
+}
+
 // Save preferences, close the configuration UI dialog, and render updated content.
 function saveAndClose() {
 
@@ -310,16 +344,9 @@ function saveAndClose() {
 	if (!_usePicker && __SPNS__contentItemSelector.options[__SPNS__contentItemSelector.selectedIndex]) {
 		_selectedContent.contentId = __SPNS__contentItemSelector.options[__SPNS__contentItemSelector.selectedIndex].value;
 	}
-	_selectedContent.searchTags = _escapeSolr(__SPNS__searchTagsInput.value.trim());
-	_selectedContent.numSearchRows = _isPositiveInt(__SPNS__rowsInput.value.trim());
-
-	// display errors based on sanitized user input
-	__SPNS__tagsInputError.style.display = _selectedContent.searchTags === false ? 'block' : 'none';
-	__SPNS__rowsInputError.style.display = _selectedContent.numSearchRows === false ? 'block' : 'none';
 
 	// render the content if the user input is ok
-	if(_selectedContent.searchTags !== false && _selectedContent.numSearchRows !== false) {
-		$('#__SPNS__preferences-modal').modal('hide');
+	if(checkForFormErrors() === false) {
 		// persist the changes to the portlet preferences
 		if(_saInstance) {
 			_saInstance.setPortletPreferences(_selectedContent).then(result => {
@@ -482,6 +509,7 @@ return {
 	initDialog: initDialog,
 	updateFieldVisibility: updateFieldVisibility,
 	handleTypeSelectChange: handleTypeSelectChange,
+	checkForFormErrors: checkForFormErrors,
 	saveAndClose: saveAndClose,
 	launchPicker: launchPicker
 };
