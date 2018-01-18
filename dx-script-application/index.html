@@ -47,58 +47,82 @@
 									<input type="radio" id="__SPNS__contentModeSearchButton" onclick="__SPNS__.updateFieldVisibility();" name="optradio">Search result list</label>
 							</div>
 						</div>
-						<div class="form-group row">
-							<div class="col-xs-4">
-								<label class="picker-label">Content type</label>
-							</div>
-							<div class="col-xs-8">
-								<select class="form-control" onchange="__SPNS__.handleTypeSelectChange(this);" id="__SPNS__contentTypeSelector"></select>
-							</div>
-						</div>
-						<div class="form-group row">
-							<div class="col-xs-4">
-								<label class="picker-label">Template</label>
-							</div>
-							<div class="col-xs-8">
-								<select class="form-control" id="__SPNS__templateSelector"></select>
-							</div>
-						</div>
-						<div id="__SPNS__contentItemSelectorContainer" class="form-group row">
-							<div class="col-xs-4">
-								<label class="picker-label">Content item</label>
-							</div>
-							<div class="col-xs-8">
-								<select class="form-control" id="__SPNS__contentItemSelector"></select>
-								<p id="__SPNS__contentItemText"></p>
-								<a id="__SPNS__pickerBtn" class="btn btn-primary" onclick="__SPNS__.launchPicker();" data-toggle="modal" data-backdrop="false" data-target="#__SPNS__contentPickerDialog">Launch content palette</a>
-							</div>
-						</div>
-						<div id="__SPNS__tagsInputContainer" class="form-group row">
-							<div id="__SPNS__tagsInputError" class="d-none">
-								<div class="col-xs-4"></div>
-								<div class="col-xs-8 hbs-sample-error">
-									Avoid special characters: # % & ;
+
+						<!-- Single content item mode -->
+						<div id="__SPNS__singleContainer">
+							<div class="form-group row">
+								<div class="col-xs-4">
+									<label class="picker-label">Single item content type</label>
+								</div>
+								<div class="col-xs-8">
+									<select class="form-control" onchange="__SPNS__.handleTypeSelectChange(this);" id="__SPNS__singleContentTypeSelector"></select>
 								</div>
 							</div>
-							<div class="col-xs-4">
-								<label for="searchTagsInput" class="picker-label">Optional search tag (comma separated)</label>
-							</div>
-							<div class="col-xs-8">
-								<input type="text" onblur="__SPNS__.checkForFormErrors()" class="form-control" id="__SPNS__searchTagsInput"></input>
-							</div>
-						</div>
-						<div id="__SPNS__rowsInputContainer" class="form-group row">
-							<div id="__SPNS__rowsInputError" class="d-none">
-								<div class="col-xs-4"></div>
-								<div class="col-xs-8 hbs-sample-error">
-									The number of results must be a positive integer.
+							<div class="form-group row">
+								<div class="col-xs-4">
+									<label class="picker-label">Single item template</label>
+								</div>
+								<div class="col-xs-8">
+									<select class="form-control" id="__SPNS__singleTemplateSelector"></select>
 								</div>
 							</div>
-							<div class="col-xs-4">
-								<label class="picker-label">Number of results</label>
+							<div class="form-group row">
+								<div class="col-xs-4">
+									<label class="picker-label">Content item</label>
+								</div>
+								<div class="col-xs-8">
+									<select class="form-control" id="__SPNS__contentItemSelector"></select>
+									<p id="__SPNS__contentItemText"></p>
+									<a id="__SPNS__pickerBtn" class="btn btn-primary" onclick="__SPNS__.launchPicker();" data-toggle="modal" data-backdrop="false" data-target="#__SPNS__contentPickerDialog">Launch content palette</a>
+								</div>
 							</div>
-							<div class="col-xs-8">
-								<input type="text" onblur="__SPNS__.checkForFormErrors()" value="3" class="form-control" id="__SPNS__rowsInput"></select>
+						</div>
+
+						<!-- Search result list mode -->
+						<div id="__SPNS__listContainer">
+							<div class="form-group row">
+								<div class="col-xs-4">
+									<label class="picker-label">Search content type</label>
+								</div>
+								<div class="col-xs-8">
+									<select class="form-control" onchange="__SPNS__.handleTypeSelectChange(this);" id="__SPNS__listContentTypeSelector"></select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-xs-4">
+									<label class="picker-label">Search template</label>
+								</div>
+								<div class="col-xs-8">
+									<select class="form-control" id="__SPNS__listTemplateSelector"></select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<div id="__SPNS__tagsInputError" class="d-none">
+									<div class="col-xs-4"></div>
+									<div class="col-xs-8 hbs-sample-error">
+										Avoid special characters: # % & ;
+									</div>
+								</div>
+								<div class="col-xs-4">
+									<label for="searchTagsInput" class="picker-label">Optional search tag (comma separated)</label>
+								</div>
+								<div class="col-xs-8">
+									<input type="text" onblur="__SPNS__.checkForFormErrors()" class="form-control" id="__SPNS__searchTagsInput"></input>
+								</div>
+							</div>
+							<div class="form-group row">
+								<div id="__SPNS__rowsInputError" class="d-none">
+									<div class="col-xs-4"></div>
+									<div class="col-xs-8 hbs-sample-error">
+										The number of results must be a positive integer.
+									</div>
+								</div>
+								<div class="col-xs-4">
+									<label class="picker-label">Number of results</label>
+								</div>
+								<div class="col-xs-8">
+									<input type="text" onblur="__SPNS__.checkForFormErrors()" value="3" class="form-control" id="__SPNS__rowsInput"></select>
+								</div>
 							</div>
 						</div>
 					</form>

@@ -58,8 +58,14 @@ const _contentModeSearch = 'list';		// search results list mode
 // the current selection, start off with some default values
 let _selectedContent = {
 	contentMode: _contentModeContent,
-	template: 'default.html',
-	contentType: 'Sample Article',
+	template: {
+		'content': 'default.html',
+		'list': 'default.html'
+	},
+	contentType: {
+		'content': 'Sample Article',
+		'list': 'Sample Article'
+	},
 	contentId: '',
 	contentName: '',
 	searchTags: '',
@@ -131,13 +137,13 @@ function renderContent(selContent, renderLocationId) {
 		document.getElementById(renderLocationId).innerHTML = 'Turn edit mode off to see the rendered content.';
 
 	// do a search with any available tags to retrieve the search results list
-	} else if (selContent.contentMode === _contentModeSearch && selContent.contentType && selContent.template) {
+	} else if (selContent.contentMode === _contentModeSearch && selContent.contentType[selContent.contentMode] && selContent.template[selContent.contentMode]) {
 
 		// retrieve the Handlebar template
-		getHandlebarTemplate(_templateFolder + _contentModeSearch + '/' + selContent.contentType + '/' + selContent.template).then(templateStr => {
+		getHandlebarTemplate(_templateFolder + _contentModeSearch + '/' + selContent.contentType[selContent.contentMode] + '/' + selContent.template[selContent.contentMode]).then(templateStr => {
 
 			// get the search results list, with tags, and feed it to the WCH renderer with the Handlebar template
-			let searchParams = 'fq=type:' + selContent.contentType + '&sort=lastModified%20desc&rows=' + selContent.numSearchRows;
+			let searchParams = 'fq=type:' + selContent.contentType[selContent.contentMode] + '&sort=lastModified%20desc&rows=' + selContent.numSearchRows;
 			if (selContent.searchTags) {
 				searchParams += '&fq=tags:(' + selContent.searchTags.split(',').join(' OR ') + ')';
 			}
@@ -149,10 +155,10 @@ function renderContent(selContent, renderLocationId) {
 		});
 
 	// Single content item mode
-	} else if (selContent.contentId && selContent.template) {
+	} else if (selContent.contentId && selContent.contentType[selContent.contentMode] && selContent.template[selContent.contentMode]) {
 
 		// retrieve the Handlebar template and feed it to the WCH renderer with the content item ID
-		getHandlebarTemplate(_templateFolder + _contentModeContent + '/' + selContent.contentType + '/' + selContent.template).then(templateStr => {
+		getHandlebarTemplate(_templateFolder + _contentModeContent + '/' + selContent.contentType[selContent.contentMode] + '/' + selContent.template[selContent.contentMode]).then(templateStr => {
 			return _wchRenderer.renderItem(selContent.contentId, templateStr, renderLocationId);
 
 		}).catch(err => {
@@ -177,8 +183,10 @@ function initDialog() {
 	let updateForm = (selContent) => {
 		__SPNS__contentModeContentButton.checked = selContent.contentMode !== _contentModeSearch;
 		__SPNS__contentModeSearchButton.checked = selContent.contentMode === _contentModeSearch;
-		__SPNS__templateSelector.value = selContent.template;
-		__SPNS__contentTypeSelector.value = selContent.contentType;
+		__SPNS__singleContentTypeSelector.value = selContent.contentType[_contentModeContent];
+		__SPNS__listContentTypeSelector.value = selContent.contentType[_contentModeSearch];
+		__SPNS__singleTemplateSelector.value = selContent.template[_contentModeContent];
+		__SPNS__listTemplateSelector.value = selContent.template[_contentModeSearch];
 		__SPNS__contentItemSelector.value = selContent.contentId;
 		__SPNS__contentItemText.innerHTML = selContent.contentName ?  selContent.contentName + '&nbsp;&nbsp;&nbsp;&nbsp;' : 'Pick content here-->&nbsp;&nbsp;';
 		__SPNS__searchTagsInput.value = selContent.searchTags || '';
@@ -198,6 +206,7 @@ function initDialog() {
 			if (prefs) {
 				_selectedContent = prefs;
 			}
+			if(_wchRenderer.debug) console.log('Portlet preferences are: %o', _selectedContent);
 			updateForm(_selectedContent);
 		});
 
@@ -213,20 +222,22 @@ function updateFieldVisibility() {
 
 	// get the mode from the UI form
 	_selectedContent.contentMode = __SPNS__contentModeSearchButton.checked ? _contentModeSearch : _contentModeContent;
+	if(_wchRenderer.debug) console.log('Going to mode: %o', _selectedContent.contentMode);
+	_selectedContent.template[_contentModeContent] = __SPNS__singleTemplateSelector.value;
+	_selectedContent.template[_contentModeSearch] = __SPNS__listTemplateSelector.value;
 	initTypeSelector();
 
 	// check for errors
 	checkForFormErrors();
 
-	// Search results list mode : Single content item mode
+	// mode
 	const listMode = _selectedContent.contentMode === _contentModeSearch;
-	__SPNS__rowsInputContainer.style.display = listMode ? 'block' : 'none';
-	__SPNS__tagsInputContainer.style.display = listMode ? 'block' : 'none';
-	__SPNS__contentItemSelectorContainer.style.display = listMode ? 'none' : 'block';
 	if (listMode) __SPNS__contentModeSearchButton.checked = true;
 	else __SPNS__contentModeContentButton.checked = true;
+	__SPNS__singleContainer.style.display = listMode ? 'none' : 'block';
+	__SPNS__listContainer.style.display = listMode ? 'block' : 'none';
 
-	// Content item picker mode : Content item dropdown mode
+	// content picker
 	__SPNS__contentItemSelector.style.display = _usePicker ? 'none' : 'block';
 	__SPNS__contentItemText.style.display = _usePicker ? 'block' : 'none';
 	__SPNS__pickerBtn.style.display = _usePicker ? 'inline' : 'none';
@@ -242,17 +253,18 @@ function initTypeSelector() {
 		let formOptions = typeList.reduce((options, type) => options + '<option value="' + type.typeName + '">' + type.typeName + '</option>', '');
 
 		// update the "Content type" form select menu with the HTML options
-		__SPNS__contentTypeSelector.innerHTML = formOptions;
-		__SPNS__contentTypeSelector.value = _selectedContent.contentType;
+		const selector = _selectedContent.contentMode === _contentModeSearch ? __SPNS__listContentTypeSelector : __SPNS__singleContentTypeSelector;
+		selector.innerHTML = formOptions;
+		selector.value = _selectedContent.contentType[_selectedContent.contentMode] || typeList[0];
 		handleTypeSelectChange();
 	}
 }
 
 // Update the "Template" and "Content item" select menus, according to changes made in the "Content type" select menu.
 function handleTypeSelectChange() {
-	const contentType = __SPNS__contentTypeSelector.value;
+	const contentType = _selectedContent.contentMode === _contentModeSearch ? __SPNS__listContentTypeSelector.value : __SPNS__singleContentTypeSelector.value;
 	if (contentType) {
-		_selectedContent.contentType = contentType;
+		_selectedContent.contentType[_selectedContent.contentMode] = contentType;
 		populateTemplatePicker(_selectedContent.contentMode, contentType);
 	}
 	if(!_usePicker) populateContentPicker();
@@ -270,8 +282,9 @@ function populateTemplatePicker(mode, contentType) {
 		}, '');
 
 		// update the "Template" form select menu with the HTML options
-		__SPNS__templateSelector.innerHTML = formOptions;
-		__SPNS__templateSelector.value = _selectedContent.template || templateList[0];
+		const selector = _selectedContent.contentMode === _contentModeSearch ? __SPNS__listTemplateSelector : __SPNS__singleTemplateSelector;
+		selector.innerHTML = formOptions;
+		selector.value = _selectedContent.template[_selectedContent.contentMode] || templateList[0];
 	}
 }
 
@@ -279,7 +292,7 @@ function populateTemplatePicker(mode, contentType) {
 function populateContentPicker() {
 
 	// do a search for content items of the current Type
-	const searchParams = ('q=*:*&fl=*&fq=classification:content&fq=type:' + _selectedContent.contentType + '&rows=200').replace(' ', '%5C ');
+	const searchParams = ('q=*:*&fl=*&fq=classification:content&fq=type:' + _selectedContent.contentType[_contentModeContent] + '&rows=200').replace(' ', '%5C ');
 	return _wchRenderer.queryWCH('search?' + searchParams).then(result => {
 
 		if(result.documents) {
@@ -294,11 +307,11 @@ function populateContentPicker() {
 
 		// there are no content items of the given Type
 		} else {
-			_displayError(`There are no content items available for type "${_selectedContent.contentType}". Please ensure content exists for this type in WCH.`, [`No content items available for type "${_selectedContent.contentType}", with selected content object: %o. Make sure items for this type exist in WCH and the "_selectedContent" JSON object is filled out properly.`, _selectedContent]);
+			_displayError(`There are no content items available for type "${_selectedContent.contentType[_selectedContent.contentMode]}". Please ensure content exists for this type in WCH.`, [`No content items available for type "${_selectedContent.contentType[_selectedContent.contentMode]}", with selected content object: %o. Make sure items for this type exist in WCH and the "_selectedContent" JSON object is filled out properly.`, _selectedContent]);
 		}
 
 	}).catch(reason => {
-		const baseErrStr = `Could not retrieve the list of content items for Type "${_selectedContent.contentType}"`;
+		const baseErrStr = `Could not retrieve the list of content items for Type "${_selectedContent.contentType[_selectedContent.contentMode]}"`;
 		_displayError(`${baseErrStr}.`, [`${baseErrStr}: ${reason}`]);
 	});
 }
@@ -339,8 +352,10 @@ function saveAndClose() {
 
 	// gather the user input
 	_selectedContent.contentMode = __SPNS__contentModeSearchButton.checked ? _contentModeSearch : _contentModeContent;
-	_selectedContent.template = __SPNS__templateSelector.value;
-	_selectedContent.contentType = __SPNS__contentTypeSelector.value;
+	_selectedContent.template[_contentModeContent] = __SPNS__singleTemplateSelector.value;
+	if(__SPNS__listTemplateSelector.value) _selectedContent.template[_contentModeSearch] = __SPNS__listTemplateSelector.value;
+	_selectedContent.contentType[_contentModeContent] = __SPNS__singleContentTypeSelector.value;
+	if(__SPNS__listContentTypeSelector.value) _selectedContent.contentType[_contentModeSearch] = __SPNS__listContentTypeSelector.value;
 	if (!_usePicker && __SPNS__contentItemSelector.options[__SPNS__contentItemSelector.selectedIndex]) {
 		_selectedContent.contentId = __SPNS__contentItemSelector.options[__SPNS__contentItemSelector.selectedIndex].value;
 	}
@@ -349,6 +364,7 @@ function saveAndClose() {
 	if(checkForFormErrors() === false) {
 		// persist the changes to the portlet preferences
 		if(_saInstance) {
+			if(_wchRenderer.debug) console.log('Saving portlet preferences: %o', _selectedContent);
 			_saInstance.setPortletPreferences(_selectedContent).then(result => {
 				if (_nativePromise) {
 					Promise = _nativePromise;
@@ -424,7 +440,7 @@ const _messageEvent = _eventMethod === 'attachEvent' ? 'onmessage' : 'message';
 
 // Load the picker and listen to message from child iFrame window.
 function launchPicker() {
-	$('#__SPNS__pickerIframe').attr('src', _deliveryPaletteUrl + _selectedContent.contentType + '")');
+	$('#__SPNS__pickerIframe').attr('src', _deliveryPaletteUrl + _selectedContent.contentType[_selectedContent.contentMode] + '")');
 	_eventer(_messageEvent, handlePaletteResult, false);
 }
 
