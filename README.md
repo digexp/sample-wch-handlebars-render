@@ -19,9 +19,9 @@ Download and unpack the entire project folder into any folder on your workstatio
 
 Replace `{Tenant API URL}` in `/dx-script-application/app.js` with the value from the "Watson Content Hub Information" dialog.
 
-#### 3. Upload sample "Article" content
+#### 3. Upload "Sample Article" content
 
-The templates provided with this sample use the "Article" content type. Follow the instructions at the [sample-article-content](https://github.com/ibm-wch/sample-article-content) repository, to download and push the sample "Article" type and associated authoring artifacts, for your Content Hub tenant.
+The templates provided with this sample use the "Sample Article" content type. Follow the instructions at the [sample-article-content](https://github.com/ibm-wch/sample-article-content) repository, to download and push the "Sample Article" type and associated authoring artifacts, for your Content Hub tenant.
 
 #### 4. Enable CORS support for your tenant
 
@@ -56,7 +56,7 @@ By default, this sample uses the [IBM Watson Content Hub Palette](https://github
 
 ## Creating your own Handlebars templates
 
-This sample expects to find rendering template files in the `/dx-script-application/hbs-templates/` directory. The provided sample templates are for the "Article" content type. You can add new Handlebars templates for your types to the directory, which is structured like this:
+This sample expects to find rendering template files in the `/dx-script-application/hbs-templates/` directory. The provided sample templates are for the "Sample Article" content type. You can add new Handlebars templates for your types to the directory, which is structured like this:
 
 	/content/[content-type]/default.html
 	/content/[content-type]/[other templates].html
@@ -71,7 +71,7 @@ Control which templates are available in the script application by editing the `
 let _availableTemplates = {
 	'content': [
 		{
-			'typeName': 'Article',
+			'typeName': 'Sample Article',
 			'templates': [
 				'default.html',
 				'banner-text-on-left.html',
@@ -83,7 +83,7 @@ let _availableTemplates = {
 	],
 	'list': [
 		{
-			'typeName': 'Article',
+			'typeName': 'Sample Article',
 			'templates': [
 				'default.html',
 				'carousel.hhtmlbs',
@@ -102,7 +102,7 @@ If a new content type, called "Product", is added, the JSON object may look like
 let _availableTemplates = {
 	'content': [
 		{
-			'typeName': 'Article',
+			'typeName': 'Sample Article',
 			'templates': [
 				'default.html',
 				'banner-text-on-left.html',
@@ -121,7 +121,7 @@ let _availableTemplates = {
 	],
 	'list': [
 		{
-			'typeName': 'Article',
+			'typeName': 'Sample Article',
 			'templates': [
 				'default.html',
 				'carousel.html',
@@ -146,7 +146,7 @@ To update the default template and content type shown in the configuration UI di
 let _selectedContent = {
 	contentMode: _contentModeContent,
 	template: 'default.html',
-	contentType: 'Article',
+	contentType: 'Sample Article',
 	contentId: '',
 	searchTags: '',
 	numSearchRows: '3'

@@ -22,7 +22,7 @@ var __SPNS__ = (() => {
 const _availableTemplates = {
 	'content': [
 		{
-			'typeName': 'Article',
+			'typeName': 'Sample Article',
 			'templates': [
 				'default.html',
 				'banner-text-on-left.html',
@@ -34,7 +34,7 @@ const _availableTemplates = {
 	],
 	'list': [
 		{
-			'typeName': 'Article',
+			'typeName': 'Sample Article',
 			'templates': [
 				'default.html',
 				'carousel.html',
@@ -59,7 +59,7 @@ const _contentModeSearch = 'list';		// search results list mode
 let _selectedContent = {
 	contentMode: _contentModeContent,
 	template: 'default.html',
-	contentType: 'Article',
+	contentType: 'Sample Article',
 	contentId: '',
 	contentName: '',
 	searchTags: '',
