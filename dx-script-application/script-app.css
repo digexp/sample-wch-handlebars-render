@@ -2,6 +2,10 @@ html {
 	font-size: 14px;
 }
 
+.container.hbs-sample {
+	width: auto;
+}
+
 .hbs-sample-row {
 	margin-top: 20px;
 }
