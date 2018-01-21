@@ -51,7 +51,10 @@ To use this server:
 1. Run `npm install` from the root project folder
 2. Run `node main.js` to start the Express server
 
-By default, this sample uses the [IBM Watson Content Hub Palette](https://github.com/ibm-wch/sample-picker) in single content item mode. To switch to using a simple dropdown, change the `_usePicker` flag in `/dx-script-application/app.js` to `false`.
+
+## Use of the Content Palette
+
+By default, this sample uses the [IBM Watson Content Hub Palette](https://github.com/ibm-wch/sample-picker) in single content item mode. To switch to using a simple dropdown, change the `_usePicker` flag in `/dx-script-application/app.js` to `false`. Make sure to call `sp push` from the `/dx-script-application` folder to make these changes in DX.
 
 
 ## Creating your own Handlebars templates
