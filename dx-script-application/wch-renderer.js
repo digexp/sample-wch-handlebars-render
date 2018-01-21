@@ -83,6 +83,10 @@ class __SPNS__WCHRenderer {
 				this.fixContentUrls(documents);
 				const searchResults = documents.map(doc => doc.document);
 				targetNode.innerHTML = Handlebars.compile(template)({ searchResults });
+
+			// there are no results, set a user message
+			} else {
+				targetNode.innerHTML = '<div class="alert alert-warning" role="alert">No search results, pick a new content item or search query in edit mode.</div>';
 			}
 		});
 	}

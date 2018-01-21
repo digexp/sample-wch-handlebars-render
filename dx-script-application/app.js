@@ -130,11 +130,11 @@ function renderContentUsingPrefs() {
 function renderContent(selContent, renderLocationId) {
 
 	if(_wchRenderer.debug) console.log('Rendering with selected content: %o', _selectedContent);
-	const noRenderMsg = 'Nothing to render yet, pick a new content item or search query in edit mode.';
+	const noRenderMsg = '<div class="alert alert-info" role="alert">Nothing to render yet, pick a new content item or search query in edit mode.</div>';
 
 	// do not render if the page is in edit mode
 	if(editMode && _saInstance) {
-		document.getElementById(renderLocationId).innerHTML = 'Turn edit mode off to see the rendered content.';
+		document.getElementById(renderLocationId).innerHTML = '<div class="alert alert-info" role="alert">Turn edit mode off to see the rendered content.</div>';
 
 	// do a search with any available tags to retrieve the search results list
 	} else if (selContent.contentMode === _contentModeSearch && selContent.contentType[selContent.contentMode] && selContent.template[selContent.contentMode]) {
@@ -151,7 +151,7 @@ function renderContent(selContent, renderLocationId) {
 
 		}).catch(err => {
 			document.getElementById(renderLocationId).innerHTML = noRenderMsg;
-			_displayError(`Could not render search "${searchParams}".`, [`Error rendering search with params "${searchParams}" : ${err}`]);
+			_displayError(`Could not render search for "${selContent.contentType[selContent.contentMode]}" type.`, [`Error rendering search with params "${selContent.contentType[selContent.contentMode]}" : ${err}`]);
 		});
 
 	// Single content item mode
@@ -191,6 +191,7 @@ function initDialog() {
 		__SPNS__contentItemText.innerHTML = selContent.contentName ?  selContent.contentName + '&nbsp;&nbsp;&nbsp;&nbsp;' : 'Pick content here-->&nbsp;&nbsp;';
 		__SPNS__searchTagsInput.value = selContent.searchTags || '';
 		__SPNS__rowsInput.value = selContent.numSearchRows || '3';
+		__SPNS__wchContentResult.innerHTML = '<div class="alert alert-info" role="alert">Nothing to render yet, pick a new content item or search query in edit mode.</div>';
 		__SPNS__wchContentError.style.display = 'none';
 		__SPNS__tagsInputError.style.display = 'none';
 		__SPNS__rowsInputError.style.display = 'none';
@@ -504,7 +505,8 @@ function _displayError(/*String*/userStr, /*Array*/consoleArgs) {
 	if(userStr) {
 		consoleArgs = consoleArgs || [userStr];
 		console.error.apply(this, consoleArgs);
-		__SPNS__wchContentError.innerHTML = userStr;
+		__SPNS__wchContentResult.innerHTML = '';
+		__SPNS__wchContentError.innerHTML = '<div class="alert alert-danger" role="alert">' + userStr + '</div>';
 		__SPNS__wchContentError.style.display = 'block';
 	}
 }
