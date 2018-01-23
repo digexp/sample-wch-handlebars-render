@@ -2,7 +2,7 @@ html {
 	font-size: 14px;
 }
 
-.container.hbs-sample {
+.hbs-sample.container, .hbs-sample .container {
 	width: auto;
 }
 
