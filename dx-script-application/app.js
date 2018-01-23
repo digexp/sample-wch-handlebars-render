@@ -145,7 +145,8 @@ function renderContent(selContent, renderLocationId) {
 			// get the search results list, with tags, and feed it to the WCH renderer with the Handlebar template
 			let searchParams = 'fq=type:' + selContent.contentType[selContent.contentMode] + '&sort=lastModified%20desc&rows=' + selContent.numSearchRows;
 			if (selContent.searchTags) {
-				searchParams += '&fq=tags:(' + selContent.searchTags.split(',').join(' OR ') + ')';
+				const tagStr = selContent.searchTags.split(',').map(t => t.trim());
+				searchParams += '&fq=tags:(' + tagStr.join(' OR ') + ')';
 			}
 			return _wchRenderer.renderSearch(searchParams, templateStr, renderLocationId);
 
@@ -181,6 +182,8 @@ function initDialog() {
 
 	// update form based on currently selected content
 	let updateForm = (selContent) => {
+		updateFieldVisibility();
+		initTypeSelectors();
 		__SPNS__contentModeContentButton.checked = selContent.contentMode !== _contentModeSearch;
 		__SPNS__contentModeSearchButton.checked = selContent.contentMode === _contentModeSearch;
 		__SPNS__singleContentTypeSelector.value = selContent.contentType[_contentModeContent];
@@ -188,14 +191,13 @@ function initDialog() {
 		__SPNS__singleTemplateSelector.value = selContent.template[_contentModeContent];
 		__SPNS__listTemplateSelector.value = selContent.template[_contentModeSearch];
 		__SPNS__contentItemSelector.value = selContent.contentId;
-		__SPNS__contentItemText.innerHTML = selContent.contentName ?  selContent.contentName + '&nbsp;&nbsp;&nbsp;&nbsp;' : 'Pick content here-->&nbsp;&nbsp;';
+		__SPNS__contentItemText.innerHTML = selContent.contentName ? selContent.contentName + '&nbsp;&nbsp;&nbsp;&nbsp;' : 'Pick content here-->&nbsp;&nbsp;';
 		__SPNS__searchTagsInput.value = selContent.searchTags || '';
 		__SPNS__rowsInput.value = selContent.numSearchRows || '3';
 		__SPNS__wchContentResult.innerHTML = '<div class="alert alert-info" role="alert">Nothing to render yet, pick a new content item or search query in edit mode.</div>';
 		__SPNS__wchContentError.style.display = 'none';
 		__SPNS__tagsInputError.style.display = 'none';
 		__SPNS__rowsInputError.style.display = 'none';
-		updateFieldVisibility();
 	}
 
 	// the currently selected content info is saved as portlet preferences
@@ -224,12 +226,6 @@ function updateFieldVisibility() {
 	// get the mode from the UI form
 	_selectedContent.contentMode = __SPNS__contentModeSearchButton.checked ? _contentModeSearch : _contentModeContent;
 	if(_wchRenderer.debug) console.log('Going to mode: %o', _selectedContent.contentMode);
-	_selectedContent.template[_contentModeContent] = __SPNS__singleTemplateSelector.value;
-	_selectedContent.template[_contentModeSearch] = __SPNS__listTemplateSelector.value;
-	initTypeSelector();
-
-	// check for errors
-	checkForFormErrors();
 
 	// mode
 	const listMode = _selectedContent.contentMode === _contentModeSearch;
@@ -244,31 +240,52 @@ function updateFieldVisibility() {
 	__SPNS__pickerBtn.style.display = _usePicker ? 'inline' : 'none';
 }
 
-// Populate the "Content type" select menu based on the current content mode.
-function initTypeSelector() {
+// Populate the "Content type" select menus, for each mode.
+function initTypeSelectors() {
 
-	const typeList = getTypesFromMode(_selectedContent.contentMode);
-	if(typeList) {
+	const modeList = [_contentModeContent, _contentModeSearch];
+	modeList.forEach(mode => {
+		const typeList = getTypesFromMode(mode);
+		if(typeList) {
 
-		// turn the array of content types and templates into a string of HTML <option>s: <option value="Type">Type</option>
-		let formOptions = typeList.reduce((options, type) => options + '<option value="' + type.typeName + '">' + type.typeName + '</option>', '');
+			// turn the array of content types and templates into a string of HTML <option>s: <option value="Type">Type</option>
+			let formOptions = typeList.reduce((options, type) => options + '<option value="' + type.typeName + '">' + type.typeName + '</option>', '');
 
-		// update the "Content type" form select menu with the HTML options
-		const selector = _selectedContent.contentMode === _contentModeSearch ? __SPNS__listContentTypeSelector : __SPNS__singleContentTypeSelector;
-		selector.innerHTML = formOptions;
-		selector.value = _selectedContent.contentType[_selectedContent.contentMode] || typeList[0];
-		handleTypeSelectChange();
+			// update the "Content type" form select menu with the HTML options
+			const selector = mode === _contentModeSearch ? __SPNS__listContentTypeSelector : __SPNS__singleContentTypeSelector;
+			selector.innerHTML = formOptions;
+			selector.value = _selectedContent.contentType[mode] || typeList[0];
+			handleTypeSelectChange(mode);
+		}
+	});
+}
+
+// Update the "Template" and "Content item" select menus, according to changes made in a "Content type" select menu.
+function handleTypeSelectChange(mode) {
+	mode = mode || _selectedContent.contentMode;
+	const contentType = mode === _contentModeSearch ? __SPNS__listContentTypeSelector.value : __SPNS__singleContentTypeSelector.value;
+	if (contentType) {
+		_selectedContent.contentType[mode] = contentType;
+		populateTemplatePicker(mode, contentType);
+	}
+	if(!_usePicker) populateContentPicker();
+}
+
+// Save "Template" menu change.
+function handleTemplateSelectChange() {
+	const template = _selectedContent.contentMode === _contentModeSearch ? __SPNS__listTemplateSelector.value : __SPNS__singleTemplateSelector.value;
+	if (template) {
+		_selectedContent.template[_selectedContent.contentMode] = template;
 	}
 }
 
-// Update the "Template" and "Content item" select menus, according to changes made in the "Content type" select menu.
-function handleTypeSelectChange() {
-	const contentType = _selectedContent.contentMode === _contentModeSearch ? __SPNS__listContentTypeSelector.value : __SPNS__singleContentTypeSelector.value;
-	if (contentType) {
-		_selectedContent.contentType[_selectedContent.contentMode] = contentType;
-		populateTemplatePicker(_selectedContent.contentMode, contentType);
+// Save "Content item" menu change.
+function handleContentSelectChange() {
+	const contentId = __SPNS__contentItemSelector.value;
+	if (contentId) {
+		_selectedContent.contentId = contentId;
+		_selectedContent.contentName = __SPNS__contentItemSelector.options[__SPNS__contentItemSelector.selectedIndex].text
 	}
-	if(!_usePicker) populateContentPicker();
 }
 
 // Populate the "Template" select menu based on content type and mode ('content' or 'list').
@@ -283,9 +300,9 @@ function populateTemplatePicker(mode, contentType) {
 		}, '');
 
 		// update the "Template" form select menu with the HTML options
-		const selector = _selectedContent.contentMode === _contentModeSearch ? __SPNS__listTemplateSelector : __SPNS__singleTemplateSelector;
+		const selector = mode === _contentModeSearch ? __SPNS__listTemplateSelector : __SPNS__singleTemplateSelector;
 		selector.innerHTML = formOptions;
-		selector.value = _selectedContent.template[_selectedContent.contentMode] || templateList[0];
+		selector.value = _selectedContent.template[mode] || templateList[0];
 	}
 }
 
@@ -308,11 +325,11 @@ function populateContentPicker() {
 
 		// there are no content items of the given Type
 		} else {
-			_displayError(`There are no content items available for type "${_selectedContent.contentType[_selectedContent.contentMode]}". Please ensure content exists for this type in WCH.`, [`No content items available for type "${_selectedContent.contentType[_selectedContent.contentMode]}", with selected content object: %o. Make sure items for this type exist in WCH and the "_selectedContent" JSON object is filled out properly.`, _selectedContent]);
+			_displayError(`There are no content items available for type "${_selectedContent.contentType[_contentModeContent]}". Please ensure content exists for this type in WCH.`, [`No content items available for type "${_selectedContent.contentType[_contentModeContent]}", with selected content object: %o. Make sure items for this type exist in WCH and the "_selectedContent" JSON object is filled out properly.`, _selectedContent]);
 		}
 
 	}).catch(reason => {
-		const baseErrStr = `Could not retrieve the list of content items for Type "${_selectedContent.contentType[_selectedContent.contentMode]}"`;
+		const baseErrStr = `Could not retrieve the list of content items for Type "${_selectedContent.contentType[_contentModeContent]}"`;
 		_displayError(`${baseErrStr}.`, [`${baseErrStr}: ${reason}`]);
 	});
 }
@@ -527,6 +544,8 @@ return {
 	initDialog: initDialog,
 	updateFieldVisibility: updateFieldVisibility,
 	handleTypeSelectChange: handleTypeSelectChange,
+	handleTemplateSelectChange: handleTemplateSelectChange,
+	handleContentSelectChange: handleContentSelectChange,
 	checkForFormErrors: checkForFormErrors,
 	saveAndClose: saveAndClose,
 	launchPicker: launchPicker
