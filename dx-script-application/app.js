@@ -147,7 +147,7 @@ function renderContent(selContent, renderLocationId) {
 			// get the search results list, with tags, and feed it to the WCH renderer with the Handlebar template
 			let searchParams = 'fq=type:' + selContent.contentType[selContent.contentMode] + '&sort=lastModified%20desc&rows=' + selContent.numSearchRows;
 			if (selContent.searchTags) {
-				const tagStr = selContent.searchTags.split(',').map(t => t.trim());
+				const tagStr = selContent.searchTags.split(',').map(t => '"' + t.trim() + '"');
 				searchParams += '&fq=tags:(' + tagStr.join(' OR ') + ')';
 			}
 			return _wchRenderer.renderSearch(searchParams, templateStr, renderLocationId);
