@@ -19,6 +19,16 @@ var __SPNS__ = (() => {
 *	The object mirrors the file structure under the /dx-script-application/hbs-templates/ directory
 *
 *****************************************************************************************************/
+
+// contants and defaults
+const _usePicker = true;
+const _baseTenantUrl = '{Tenant API URL}';	// Set your base tenant API URL here
+const _deliveryPaletteUrl = 'https://www.digitalexperience.ibm.com/content-picker/picker.html?apiUrl=' + _baseTenantUrl + '&fq=classification:content&fq=type:("';
+const _templateFolder = 'hbs-templates/';
+const _contentModeContent = 'content';	// single content item mode, default
+const _contentModeSearch = 'list';		// search results list mode
+
+// list all the available templates
 const _availableTemplates = {
 	'content': [
 		{
@@ -46,14 +56,6 @@ const _availableTemplates = {
 		}
 	]
 };
-
-// contants and defaults
-const _usePicker = true;
-const _baseTenantUrl = '{Tenant API URL}';	// Set your base tenant API URL here
-const _deliveryPaletteUrl = 'https://www.digitalexperience.ibm.com/content-picker/picker.html?apiUrl=' + _baseTenantUrl + '&fq=classification:content&fq=type:("';
-const _templateFolder = 'hbs-templates/';
-const _contentModeContent = 'content';	// single content item mode, default
-const _contentModeSearch = 'list';		// search results list mode
 
 // the current selection, start off with some default values
 let _selectedContent = {
@@ -265,7 +267,15 @@ function handleTypeSelectChange(mode) {
 	mode = mode || _selectedContent.contentMode;
 	const contentType = mode === _contentModeSearch ? __SPNS__listContentTypeSelector.value : __SPNS__singleContentTypeSelector.value;
 	if (contentType) {
+		// clear out content item in single mode
+		if(mode === _contentModeContent && contentType !== _selectedContent.contentType[mode]) {
+			_selectedContent.contentId = '';
+			_selectedContent.contentName = '';
+			__SPNS__contentItemText.innerHTML = 'Pick content here-->&nbsp;&nbsp;';
+		}
+		// save the content type
 		_selectedContent.contentType[mode] = contentType;
+		// re-populate the template dropdown
 		populateTemplatePicker(mode, contentType);
 	}
 	if(!_usePicker) populateContentPicker();
