@@ -567,5 +567,5 @@ return {
 
 } catch(e) {
 	console.error('A fatal error occurred: %o', e);
-	document.body.innerHTML = '<div class="alert alert-danger" role="alert">A fatal error occurred. Refresh the page, or contact your administrator.</div>';
+	__SPNS__body.innerHTML = '<div class="alert alert-danger" role="alert">A fatal error occurred. Refresh the page, or contact your administrator.</div>';
 }
