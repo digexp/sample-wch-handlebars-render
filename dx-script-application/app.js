@@ -9,6 +9,8 @@
  */
 'use strict';
 
+try {
+
 // use module pattern to protect private vars
 var __SPNS__ = (() => {
 
@@ -562,3 +564,8 @@ return {
 };
 
 })();
+
+} catch(e) {
+	console.error('A fatal error occurred: %o', e);
+	document.body.innerHTML = '<div class="alert alert-danger" role="alert">A fatal error occurred. Refresh the page, or contact your administrator.</div>';
+}
