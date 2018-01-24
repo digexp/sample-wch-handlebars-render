@@ -162,3 +162,6 @@ let _selectedContent = {
 	numSearchRows: '3'
 };
 ```
+
+## Sample limitations
+- Modern ES6 JavaScript code is not compatible with Internet Explorer. To run this sample in Internet Explorer, the use of the `class` keyword, and [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) would need to be removed.
