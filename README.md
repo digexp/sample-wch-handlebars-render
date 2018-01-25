@@ -147,7 +147,6 @@ let _availableTemplates = {
 To update the default templates and content types shown in the configuration UI dialog, update the `_selectedContent` JSON object in `/dx-script-application/app.js`:
 ```
 let _selectedContent = {
-	contentMode: _contentModeContent,
 	template: {
 		'content': 'default.html',
 		'list': 'default.html'
@@ -155,11 +154,7 @@ let _selectedContent = {
 	contentType: {
 		'content': 'Sample Article',
 		'list': 'Sample Article'
-	},
-	contentId: '',
-	contentName: '',
-	searchTags: '',
-	numSearchRows: '3'
+	}
 };
 ```
 
