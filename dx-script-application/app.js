@@ -315,6 +315,11 @@ function populateTemplatePicker(mode, contentType) {
 		const selector = mode === _contentModeSearch ? __SPNS__listTemplateSelector : __SPNS__singleTemplateSelector;
 		selector.innerHTML = formOptions;
 		selector.value = _selectedContent.template[mode] || templateList[0];
+
+		// protect against no template selected
+		if(!selector.value && selector.options.length) {
+			selector.value = _selectedContent.template[mode] = selector.options[0].value;
+		}
 	}
 }
 
