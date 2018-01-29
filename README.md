@@ -2,11 +2,14 @@
 This is a sample script application for IBM Digital Experience (DX) 8.5 or 9.0. It lets you display a single content item or a search results list for a selected WCH content type on a DX page. To render the content it uses Handlebars templates that are stored in Watson Content Hub (WCH). Several Handlebars templates are provided with the sample.
 
 
-This screenshot shows a Portal page with two instances of this application. The top instance shows a single "Hero Banner" content item and the bottom instance shows a search for articles.
-![single item and list content rendering](docs/dx-script-app.jpg?raw=true "Sample screenshot")
+A Portal page with two instances of this application. The top instance shows a single "Hero Banner" content item and the bottom instance shows a search for articles.
+![single item and list content rendering](docs/render.jpg?raw=true "single item and list content rendering screenshot")
 
-This shows the configuration UI for selecting a content item or search parameters.
-![content configuration](docs/dx-script-app-configuration.jpg?raw=true "Sample configuration screenshot")
+The configuration UI for selecting a single content item.
+![single item configuration](docs/single-config.jpg?raw=true "single item configuration screenshot")
+
+The configuration UI for selecting search parameters.
+![list configuration](docs/list-config.jpg?raw=true "list configuration screenshot")
 
 
 ## Installing and running the sample
