@@ -110,7 +110,6 @@ class __SPNS__WCHRenderer {
 		return new Promise((resolve, reject) => {
 			const req = new XMLHttpRequest();
 			req.onload = resolve;
-			req.withCredentials = true;
 			req.onerror = () => {
 				reject(`There was a network error sending a request to WCH => ${url}`);
 			};

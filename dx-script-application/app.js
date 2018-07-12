@@ -24,7 +24,7 @@ var __SPNS__ = (() => {
 
 // contants and defaults
 const _usePicker = true;
-const _baseTenantUrl = '{Tenant API URL}';	// Set your base tenant API URL here
+const _baseTenantUrl = 'https://my16.digitalexperience.ibm.com/api/ba625a75-8c5b-4fed-adb7-57f19d970b9b';	// Set your base tenant API URL here
 const _deliveryPaletteUrl = 'https://www.digitalexperience.ibm.com/content-picker/picker.html?apiUrl=' + _baseTenantUrl + '&fq=classification:content&fq=type:("';
 const _templateFolder = 'hbs-templates/';
 const _contentModeContent = 'content';	// single content item mode, default
@@ -506,7 +506,6 @@ function getHandlebarTemplate(path) {
 	return new Promise((resolve, reject) => {
 		const req = new XMLHttpRequest();
 		req.onload = resolve;
-		req.withCredentials = true;
 		req.onerror = () => {
 			reject(`There was a network error retrieving the template with path => ${path}`);
 		};
