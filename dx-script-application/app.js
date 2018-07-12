@@ -506,7 +506,6 @@ function getHandlebarTemplate(path) {
 	return new Promise((resolve, reject) => {
 		const req = new XMLHttpRequest();
 		req.onload = resolve;
-		req.withCredentials = true;
 		req.onerror = () => {
 			reject(`There was a network error retrieving the template with path => ${path}`);
 		};
