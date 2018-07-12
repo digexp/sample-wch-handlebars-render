@@ -24,7 +24,7 @@ var __SPNS__ = (() => {
 
 // contants and defaults
 const _usePicker = true;
-const _baseTenantUrl = 'https://my16.digitalexperience.ibm.com/api/ba625a75-8c5b-4fed-adb7-57f19d970b9b';	// Set your base tenant API URL here
+const _baseTenantUrl = '{Tenant API URL}';	// Set your base tenant API URL here
 const _deliveryPaletteUrl = 'https://www.digitalexperience.ibm.com/content-picker/picker.html?apiUrl=' + _baseTenantUrl + '&fq=classification:content&fq=type:("';
 const _templateFolder = 'hbs-templates/';
 const _contentModeContent = 'content';	// single content item mode, default
